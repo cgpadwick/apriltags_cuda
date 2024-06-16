@@ -9,6 +9,7 @@ find_package(CUDA REQUIRED)
 find_package(glog REQUIRED)
 find_package(GTest REQUIRED)
 find_package(OpenCV 4.9.0 REQUIRED CONFIG)
+find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
 
 # Add CCCL package
 CPMAddPackage(
@@ -25,7 +26,15 @@ CPMAddPackage(
     GIT_TAG 3.3.0
 )
 
+# Add pybind11 package
+CPMAddPackage(
+    NAME pybind11
+    GITHUB_REPOSITORY pybind/pybind11
+    GIT_TAG v2.12.0
+)
+
 message("CCCL: ${CCCL_SOURCE_DIR} APRILTAG: ${apriltag_SOURCE_DIR}")
+message("pybind11: ${pybind11_SOURCE_DIR}")
 
 # Set default build type if not specified
 if(NOT CMAKE_BUILD_TYPE)
@@ -106,8 +115,32 @@ target_link_libraries(gpu_detector_test
     glog::glog
     GTest::GTest)
 
+# Add python bindings target.
+add_library(apriltag_bindings
+    MODULE
+    py_bindings.cpp
+    apriltag_utils.cu)
+target_include_directories(apriltag_bindings
+    PRIVATE
+    ${apriltag_SOURCE_DIR}
+    ${apriltag_SOURCE_DIR}/common/
+    ${pybind11_SOURCE_DIR}/include
+    ${Python3_INCLUDE_DIRS})
+target_link_libraries(apriltag_bindings
+    PRIVATE
+    apriltag::apriltag
+    ${OpenCV_LIBRARIES}
+    ${Python3_LIBRARIES})
+set_target_properties(apriltag_bindings
+    PROPERTIES PREFIX
+    "${PYTHON_MODULE_PREFIX}"
+    SUFFIX
+    "${PYTHON_MODULE_EXTENSION}")
+
 # Add a custom target to format all source files
 add_custom_target(format_all
-    COMMAND clang-format -i -style=Google ${CMAKE_CURRENT_SOURCE_DIR}/*.cu ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+    COMMAND clang-format -i -style=Google ${CMAKE_CURRENT_SOURCE_DIR}/*.cu 
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
     COMMENT "Running clang-format on all source files"
 )
