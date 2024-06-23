@@ -35,6 +35,43 @@ zarray* detect_tags_cpu(apriltag_detector_t* td, cv::Mat& im) {
   return detections;
 }
 
+// The array attributes "c" and "p" of "apriltag_detection" require
+// custom getters and setters since pybind11 can't deal with arrays
+// directly
+// Custom getter for 'c' attribute of 'apriltag_detection'.
+std::array<double, 2> get_c(const apriltag_detection& self) {
+  return {self.c[0], self.c[1]};
+}
+
+// Custom setter for 'c' attribute of 'apriltag_detection'.
+void set_c(apriltag_detection& self, const std::array<double, 2>& value) {
+  self.c[0] = value[0];
+  self.c[1] = value[1];
+}
+
+// Custom getter for 'p' attribute of 'apriltag_detection'.
+std::array<std::array<double, 2>, 4> get_p(const apriltag_detection& self) {
+  std::array<std::array<double, 2>, 4> result;
+  for (size_t i = 0; i < 4; ++i) {
+    result[i][0] = self.p[i][0];
+    result[i][1] = self.p[i][1];
+  }
+  return result;
+}
+
+// Custom setter for 'p' attribute of 'apriltag_detection'.
+void set_p(apriltag_detection& self,
+           const std::array<std::array<double, 2>, 4>& value) {
+  for (size_t i = 0; i < 4; ++i) {
+    self.p[i][0] = value[i][0];
+    self.p[i][1] = value[i][1];
+  }
+}
+
+void apriltag_detector_destroy_wrapper(apriltag_detector_t* td) {
+  apriltag_detector_destroy(td);
+}
+
 PYBIND11_MODULE(apriltag_bindings, m) {
   m.def("setup_tag_family", &setup_tag_family_wrapper,
         py::return_value_policy::reference, "Setup the tag family",
@@ -45,6 +82,9 @@ PYBIND11_MODULE(apriltag_bindings, m) {
 
   m.def("detect_tags_cpu", &detect_tags_cpu, py::return_value_policy::reference,
         "Detect tags in an opencv Mat image", py::arg("tf"), py::arg("im"));
+
+  m.def("apriltag_detector_destroy", &apriltag_detector_destroy_wrapper,
+        "Destroy the apriltag detector", py::arg("td"));
 
   py::class_<apriltag_family>(m, "AprilTagFamily")
       .def(py::init<>())  // Default constructor
@@ -77,15 +117,15 @@ PYBIND11_MODULE(apriltag_bindings, m) {
       .def_readwrite("wp", &apriltag_detector::wp)
       .def_readwrite("mutex", &apriltag_detector::mutex);
 
-  /*py::class_<apriltag_detection>(m, "AprilTagDetection")
+  py::class_<apriltag_detection>(m, "AprilTagDetection")
       .def(py::init<>())  // Default constructor
       .def_readwrite("family", &apriltag_detection::family)
       .def_readwrite("id", &apriltag_detection::id)
       .def_readwrite("hamming", &apriltag_detection::hamming)
       .def_readwrite("decision_margin", &apriltag_detection::decision_margin)
       .def_readwrite("H", &apriltag_detection::H)
-      .def_readwrite("c", &apriltag_detection::c)
-      .def_readwrite("p", &apriltag_detection::p);*/
+      .def_property("c", &get_c, &set_c)
+      .def_property("p", &get_p, &set_p);
 
   py::class_<zarray>(m, "zarray")
       .def(py::init<>())  // Default constructor
