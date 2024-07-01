@@ -61,7 +61,7 @@ class GpuDetectorTest : public ::testing::Test {
   void TearDown() override {
     // Cleanup code here if needed
     teardown_tag_family(&tf, tag_family);
-    apriltag_detector_destroy(td);
+    //apriltag_detector_destroy(td);
   }
 };
 
