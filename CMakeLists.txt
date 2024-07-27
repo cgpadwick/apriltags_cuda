@@ -115,13 +115,17 @@ ExternalProject_Add(
     BUILD_IN_SOURCE 1
     BUILD_COMMAND make -f GNUmakefile
     INSTALL_COMMAND make -f GNUmakefile prefix=${UWEBSOCKETS_INSTALL_DIR} install
+    	COMMAND ${CMAKE_COMMAND} -E make_directory ${UWEBSOCKETS_INSTALL_DIR}/lib
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/uwebsockets/src/uwebsockets/uSockets/uSockets.a ${UWEBSOCKETS_INSTALL_DIR}/lib
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/uwebsockets/src/uwebsockets/uSockets/src/libusockets.h ${UWEBSOCKETS_INSTALL_DIR}/include/uWebSockets
 )
 ExternalProject_Get_Property(uwebsockets SOURCE_DIR)
 set(UWEBSOCKETS_SOURCE_DIR ${SOURCE_DIR})
 message(STATUS "UWEBSOCKETS_SOURCE_DIR: ${UWEBSOCKETS_SOURCE_DIR}")
+message(STATUS "UWEBSOCKETS_INSTALL_DIR: ${UWEBSOCKETS_INSTALL_DIR}")
 
 add_library(USOCKETSLIB SHARED IMPORTED)
-set_target_properties(USOCKETSLIB PROPERTIES IMPORTED_LOCATION ${UWEBSOCKETS_SOURCE_DIR}/uSockets/src/uSockets.a)
+set_target_properties(USOCKETSLIB PROPERTIES IMPORTED_LOCATION ${UWEBSOCKETS_INSTALL_DIR}/lib/uSockets.a)
 
 #set(USOCKETSLIB ${UWEBSOCKETS_SOURCE_DIR}/uSockets/src/uSockets.a)
 #find_library(USOCKETSLIB uSockets.a 
@@ -216,8 +220,7 @@ include_directories(
     ${WPILIB_INSTALL_DIR}/include/ntcore
     ${WPILIB_INSTALL_DIR}/include/wpiutil
     ${HTTPLIB_INSTALL_DIR}/include
-    ${UWEBSOCKETS_INSTALL_DIR}/include
-    ${UWEBSOCKETS_SOURCE_DIR}/uSockets/src)
+    ${UWEBSOCKETS_INSTALL_DIR}/include/uWebSockets)
 
 # Add executable for OpenCV CUDA demo
 add_executable(opencv_cuda_demo opencv_cuda_demo.cu)
