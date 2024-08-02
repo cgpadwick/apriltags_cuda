@@ -127,11 +127,23 @@ message(STATUS "UWEBSOCKETS_INSTALL_DIR: ${UWEBSOCKETS_INSTALL_DIR}")
 add_library(USOCKETSLIB SHARED IMPORTED)
 set_target_properties(USOCKETSLIB PROPERTIES IMPORTED_LOCATION ${UWEBSOCKETS_INSTALL_DIR}/lib/uSockets.a)
 
-#set(USOCKETSLIB ${UWEBSOCKETS_SOURCE_DIR}/uSockets/src/uSockets.a)
-#find_library(USOCKETSLIB uSockets.a 
-#    PATHS ${UWEBSOCKETS_SOURCE_DIR}/uSockets/src/
-#    REQUIRED)
-#message(STATUS "USOCKETSLIB: ${USOCKETSLIB}")
+# Add cpp-base64 package
+ExternalProject_Add(
+    cpp-base64
+    PREFIX ${CMAKE_BINARY_DIR}/cpp-base64
+    GIT_REPOSITORY https://github.com/ReneNyffenegger/cpp-base64
+    GIT_TAG V2.rc.08
+    CONFIGURE_COMMAND ""
+    BUILD_IN_SOURCE 1
+    BUILD_COMMAND ${CMAKE_CXX_COMPILER} -c base64.cpp
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/cpp-base64/install/lib
+        COMMAND ar rcs ${CMAKE_BINARY_DIR}/cpp-base64/install/lib/libbase64.a base64.o
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/cpp-base64/install/include
+        COMMAND ${CMAKE_COMMAND} -E copy base64.h ${CMAKE_BINARY_DIR}/cpp-base64/install/include
+)
+
+add_library(LIBBASE64 SHARED IMPORTED)
+set_target_properties(LIBBASE64 PROPERTIES IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/cpp-base64/install/lib/libbase64.a)
 
 # Add 971 apriltag package
 ExternalProject_Add(
@@ -145,7 +157,7 @@ ExternalProject_Add(
 )
 
 add_dependencies(wpilib OpenCV)
-add_dependencies(apriltag OpenCV wpilib CCCL httplib uwebsockets)
+add_dependencies(apriltag OpenCV wpilib CCCL httplib uwebsockets cpp-base64)
 
 # Set default build type if not specified
 if(NOT CMAKE_BUILD_TYPE)
@@ -220,7 +232,8 @@ include_directories(
     ${WPILIB_INSTALL_DIR}/include/ntcore
     ${WPILIB_INSTALL_DIR}/include/wpiutil
     ${HTTPLIB_INSTALL_DIR}/include
-    ${UWEBSOCKETS_INSTALL_DIR}/include/uWebSockets)
+    ${UWEBSOCKETS_INSTALL_DIR}/include/uWebSockets
+    ${CMAKE_BINARY_DIR}/cpp-base64/install/include)
 
 # Add executable for OpenCV CUDA demo
 add_executable(opencv_cuda_demo opencv_cuda_demo.cu)
@@ -269,10 +282,21 @@ target_link_libraries(gpu_detector_test
     GTest::GTest)
 
 add_executable(uwebsockets_server uwebsockets_server.cpp)
-#target_link_directories(uwebsockets_server PRIVATE ${USOCKETSLIB}/uSockets/src/)
-target_link_libraries(uwebsockets_server ${USOCKETSLIB} ZLIB::ZLIB)
+target_link_libraries(uwebsockets_server 
+    ${UWEBSOCKETS_INSTALL_DIR}/lib/uSockets.a
+    ${CMAKE_BINARY_DIR}/cpp-base64/install/lib/libbase64.a
+    ZLIB::ZLIB)
 
-#add_executable(uwebsockets_client uwebsockets_client.cpp)
+add_executable(uwebsockets_client uwebsockets_client.cpp)
+target_link_libraries(uwebsockets_client
+    ${UWEBSOCKETS_INSTALL_DIR}/lib/uSockets.a
+    ${CMAKE_BINARY_DIR}/cpp-base64/install/lib/libbase64.a
+    ${OPENCV_INSTALL_DIR}/lib/libopencv_core.so
+    ${OPENCV_INSTALL_DIR}/lib/libopencv_imgproc.so
+    ${OPENCV_INSTALL_DIR}/lib/libopencv_highgui.so
+    ${OPENCV_INSTALL_DIR}/lib/libopencv_videoio.so
+    ${OPENCV_INSTALL_DIR}/lib/libopencv_imgcodecs.so
+    ZLIB::ZLIB)
 
 # Add a custom target to format all source files
 add_custom_target(format_all
