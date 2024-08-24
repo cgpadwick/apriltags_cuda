@@ -1,26 +1,28 @@
-#include <networktables/NetworkTable.h>
-#include <networktables/NetworkTableEntry.h>
-#include <networktables/NetworkTableInstance.h>
+#include "networktables/NetworkTable.h"
+#include "networktables/DoubleTopic.h"
 
-#include <iostream>
+#include <string>
 
-int main() {
-  // Initialize NetworkTables
-  auto ntinst = nt::NetworkTableInstance::GetDefault();
+class ValueSender{
+  private:
+    nt::NetworkTableInstance inst;
+  public:
+    ValueSender(){
+      inst = nt::NetworkTableInstance::GetDefault();
+      inst.SetServerTeam(766);
+    }
 
-  // Start client
-  ntinst.StartClient3("localhost");  // Replace "localhost" with the IP address
-                                     // of your server if needed
+    void sendValue(std::string key, double value){
+      auto table = inst.GetTable("SmartDashboard");
+      table->PutNumber(key, value);
+    }
+  
+};
 
-  // Get the table and key
-  auto table = ntinst.GetTable("datatable");
-  nt::NetworkTableEntry entry = table->GetEntry("myKey");
-
-  // Retrieve value (assuming it is a double, change as needed)
-  double value = entry.GetDouble(0.0);
-
-  // Print the value
-  std::cout << "Value from NetworkTables: " << value << std::endl;
-
+int main(){
+  ValueSender sender;
+  while(2>1){
+    sender.sendValue("test", 1.0);
+  }
   return 0;
 }
