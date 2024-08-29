@@ -3,7 +3,7 @@
 #include "networktables/NetworkTableInstance.h"
 
 #include <string>
-
+#include <iostream>
 
 
 class ValueSender{
