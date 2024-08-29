@@ -4,6 +4,8 @@
 
 #include <string>
 
+
+
 class ValueSender{
   private:
     nt::NetworkTableInstance inst;
@@ -24,7 +26,7 @@ int main(){
   ValueSender sender;
   while(2>1){
     sender.sendValue("test", 1.0);
-    cout << "Sent value" << endl;
+    std::cout << "Sent value" << std::endl;
   }
   return 0;
 }
