@@ -24,6 +24,7 @@ int main(){
   ValueSender sender;
   while(2>1){
     sender.sendValue("test", 1.0);
+    cout << "Sent value" << endl;
   }
   return 0;
 }
