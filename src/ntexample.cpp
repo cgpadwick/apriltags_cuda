@@ -14,7 +14,8 @@ class DoubleValueSender{
     DoubleValueSender(std::string key){
       inst = nt::NetworkTableInstance::GetDefault();
       inst.SetServer("10.7.66.2");
-      auto table = inst.GetTable("SmartDashboard");
+      inst.StartClient4("10.7.66.2");
+      auto table = inst.GetTable("/SmartDashboard");
       nt::DoubleTopic topic = table->GetDoubleTopic(key);
       
       publisher = topic.Publish();
