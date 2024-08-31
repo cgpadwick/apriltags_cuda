@@ -1,31 +1,40 @@
 #include "networktables/NetworkTable.h"
 #include "networktables/DoubleTopic.h"
 #include "networktables/NetworkTableInstance.h"
+#include "networktables/DoublePublisher.h"
 
 #include <string>
 #include <iostream>
 
 
-class ValueSender{
+class DoubleValueSender{
   private:
     nt::NetworkTableInstance inst;
+    nt::DoublePublisher publisher;
   public:
-    ValueSender(){
+    DoubleValueSender(std::string key){
       inst = nt::NetworkTableInstance::GetDefault();
-      inst.SetServerTeam(766);
+      inst.SetServer("10.7.66.2");
+      auto table = inst.GetTable("SmartDashboard");
+      nt::DoubleTopic topic = table.getDoubleTopic(key);
+      
+      publisher = topic.Publish();
     }
 
-    void sendValue(std::string key, double value){
-      auto table = inst.GetTable("SmartDashboard");
-      table->PutNumber(key, value);
+    void sendValue(double value){
+      publisher.Set(value);
+    }
+
+    void setDefaultValue(double value){
+      publisher.SetDefault(value);
     }
   
 };
 
 int main(){
-  ValueSender sender;
+  DoubleValueSender sender("NVIDIA ORIN TEST");
   while(2>1){
-    sender.sendValue("test", 1.0);
+    sender.sendValue(1.0);
     std::cout << "Sent value" << std::endl;
   }
   return 0;
