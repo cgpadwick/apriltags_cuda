@@ -1,7 +1,6 @@
 #include "networktables/NetworkTable.h"
 #include "networktables/DoubleTopic.h"
 #include "networktables/NetworkTableInstance.h"
-#include "networktables/DoublePublisher.h"
 
 #include <string>
 #include <iostream>
