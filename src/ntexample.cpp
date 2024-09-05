@@ -11,30 +11,30 @@ Right now, the table is /SmartDashboard so we can visualize the values sent from
 Later, this should be changed to a new table, such as /Orin or /Vision, to avoid populating the SmartDashboard with unnecessary values
 */
 
-class DoubleValueSender{
-  private:
-    nt::NetworkTableInstance inst;
-    nt::DoublePublisher publisher;
-  public:
-    DoubleValueSender(std::string key){
-      inst = nt::NetworkTableInstance::GetDefault();
-      inst.SetServer("10.7.66.2");
-      inst.StartClient4("10.7.66.2");
-      auto table = inst.GetTable("/SmartDashboard");
-      nt::DoubleTopic topic = table->GetDoubleTopic(key);
+// class DoubleValueSender{
+//   private:
+//     nt::NetworkTableInstance inst;
+//     nt::DoublePublisher publisher;
+//   public:
+//     DoubleValueSender(std::string key){
+//       inst = nt::NetworkTableInstance::GetDefault();
+//       inst.SetServer("10.7.66.2");
+//       inst.StartClient4("10.7.66.2");
+//       auto table = inst.GetTable("/SmartDashboard");
+//       nt::DoubleTopic topic = table->GetDoubleTopic(key);
       
-      publisher = topic.Publish();
-    }
+//       publisher = topic.Publish();
+//     }
 
-    void sendValue(double value){
-      publisher.Set(value);
-    }
+//     void sendValue(double value){
+//       publisher.Set(value);
+//     }
 
-    void setDefaultValue(double value){
-      publisher.SetDefault(value);
-    }
+//     void setDefaultValue(double value){
+//       publisher.SetDefault(value);
+//     }
   
-};
+// };
 
 class DoubleArraySender{
   private:
