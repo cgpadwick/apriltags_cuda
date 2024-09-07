@@ -20,6 +20,9 @@
 #include "apriltag_utils.h"
 #include "opencv2/opencv.hpp"
 
+#include "DoubleArraySender.h"
+#include "DoubleValueSender.h"
+
 extern "C" {
 #include "apriltag.h"
 #include "apriltag_pose.h"
@@ -34,6 +37,8 @@ DEFINE_int32(camera_idx, 0, "Camera index");
 enum ExposureMode { AUTO = 0, MANUAL = 1 };
 
 class AprilTagHandler : public seasocks::WebSocket::Handler {
+ private:
+  DoubleValueSender tagIDSender("tagID");
  public:
   AprilTagHandler(std::shared_ptr<seasocks::Server> server) : server_(server) {}
 
@@ -209,6 +214,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
           std::cout << "Pose Error: " << err << std::endl;
 
           detection_record["id"] = det->id;
+          tagIDSender.sendValue(det->id);
           detection_record["hamming"] = det->hamming;
           detection_record["pose_error"] = err;
 
