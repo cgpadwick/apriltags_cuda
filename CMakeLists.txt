@@ -206,10 +206,10 @@ target_link_libraries(visualize
     glog::glog)
 
 # Add a network tables example.
-add_executable(ntexample src/ntexample.cpp)
-target_link_libraries(ntexample
-    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
-    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
+#add_executable(ntexample src/ntexample.cpp)
+#target_link_libraries(ntexample
+#    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
+#    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
 
 add_executable(DoubleValueSender src/DoubleValueSender.cpp)
 target_link_libraries(DoubleValueSender
