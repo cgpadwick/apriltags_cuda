@@ -13,22 +13,22 @@ Later, this should be changed to a new table, such as /Orin or /Vision, to avoid
 
 class DoubleArraySender{
   private:
-    nt::NetworkTableInstance inst;
-    nt::DoubleArrayPublisher publisher;
+    nt::NetworkTableinstance inst_;
+    nt::DoubleArrayPublisher publisher_;
   public:
     DoubleArraySender(std::string key){
-      inst = nt::NetworkTableInstance::GetDefault();
-      inst.SetServer("10.7.66.2");
-      inst.StartClient4("10.7.66.2");
-      auto table = inst.GetTable("/SmartDashboard");
+      inst_ = nt::NetworkTableinstance::GetDefault();
+      inst_.SetServer("10.7.66.2");
+      inst_.StartClient4("10.7.66.2");
+      auto table = inst_.GetTable("/SmartDashboard");
       nt::DoubleArrayTopic topic = table->GetDoubleArrayTopic(key);
-      publisher = topic.Publish();
+      publisher_ = topic.Publish();
     }
     void sendValue(std::vector<double> value){
-      publisher.Set(value);
+      publisher_.Set(value);
     }
     void setDefaultValue(std::vector<double> value){
-      publisher.SetDefault(value);
+      publisher_.SetDefault(value);
     }
 };
 
