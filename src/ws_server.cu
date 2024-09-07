@@ -15,6 +15,7 @@
 #include <opencv2/opencv.hpp>
 #include <set>
 #include <thread>
+#include <string>
 
 #include "apriltag_gpu.h"
 #include "apriltag_utils.h"
@@ -37,8 +38,6 @@ DEFINE_int32(camera_idx, 0, "Camera index");
 enum ExposureMode { AUTO = 0, MANUAL = 1 };
 
 class AprilTagHandler : public seasocks::WebSocket::Handler {
- private:
-  DoubleValueSender tagIDSender("tagID");
  public:
   AprilTagHandler(std::shared_ptr<seasocks::Server> server) : server_(server) {}
 
@@ -231,6 +230,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
   void stop() { running_ = false; }
 
  private:
+  DoubleValueSender tagIDSender("tag_id");
   std::set<seasocks::WebSocket*> clients_;
   std::mutex mutex_;
   std::shared_ptr<seasocks::Server> server_;
