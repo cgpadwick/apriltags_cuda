@@ -161,6 +161,8 @@ set(CUDA_LIB_SOURCES
     src/points.cu
     src/threshold.cu
     src/apriltag_utils.cu
+    src/DoubleArraySender.cpp
+    src/DoubleValueSender.cpp
     src/video_processor.cu)
 
 # Add a library with the above source files
@@ -211,15 +213,15 @@ target_link_libraries(visualize
 #    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
 #    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
 
-add_executable(DoubleValueSender src/DoubleValueSender.cpp)
-target_link_libraries(DoubleValueSender
-    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
-    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
+#add_executable(DoubleValueSender src/DoubleValueSender.cpp)
+#target_link_libraries(DoubleValueSender
+#    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
+#    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
 
-add_executable(DoubleArraySender src/DoubleArraySender.cpp)
-target_link_libraries(DoubleArraySender
-    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
-    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
+#add_executable(DoubleArraySender src/DoubleArraySender.cpp)
+#target_link_libraries(DoubleArraySender
+#    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
+#    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
 
 
 # Add the test executable
