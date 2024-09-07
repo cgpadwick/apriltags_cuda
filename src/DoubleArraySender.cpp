@@ -7,7 +7,7 @@ Later, this should be changed to a new table, such as /Orin or /Vision, to avoid
 
 
 DoubleArraySender::DoubleArraySender(std::string key){
-  inst_ = nt::NetworkTableinstance::GetDefault();
+  inst_ = nt::NetworkTableInstance::GetDefault();
   inst_.SetServer("10.7.66.2");
   inst_.StartClient4("10.7.66.2");
   auto table = inst_.GetTable("/SmartDashboard");
