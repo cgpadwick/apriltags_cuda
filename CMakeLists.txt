@@ -258,6 +258,8 @@ target_link_libraries(ws_server
     ${OPENCV_INSTALL_DIR}/lib/libopencv_highgui.so
     ${OPENCV_INSTALL_DIR}/lib/libopencv_videoio.so
     ${OPENCV_INSTALL_DIR}/lib/libopencv_imgcodecs.so
+    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
+    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so
     glog::glog
     Threads::Threads
     ZLIB::ZLIB)
