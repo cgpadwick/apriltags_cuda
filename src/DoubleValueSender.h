@@ -10,8 +10,7 @@
 class DoubleValueSender {
   private:
     nt::NetworkTableInstance inst_;
-    nt::DoubleArrayPublisher publisher_;
-  
+    nt::DoublePublisher publisher_;
   public:
     // Constructor declaration
     DoubleValueSender(std::string key);

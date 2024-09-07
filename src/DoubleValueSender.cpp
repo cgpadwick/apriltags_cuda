@@ -10,7 +10,7 @@ DoubleValueSender::DoubleValueSender(std::string key){
   inst_ = nt::NetworkTableInstance::GetDefault();
   inst_.SetServer("10.7.66.2");
   inst_.StartClient4("10.7.66.2");
-  auto table = inst.GetTable("/SmartDashboard");
+  auto table = inst_.GetTable("/SmartDashboard");
   nt::DoubleTopic topic = table->GetDoubleTopic(key);
   publisher_ = topic.Publish();
 }
