@@ -230,7 +230,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
   void stop() { running_ = false; }
 
  private:
-  DoubleValueSender tagIDSender("tag_id");
+  DoubleValueSender tagIDSender{"tag_id"};
   std::set<seasocks::WebSocket*> clients_;
   std::mutex mutex_;
   std::shared_ptr<seasocks::Server> server_;
