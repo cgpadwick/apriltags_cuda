@@ -211,6 +211,17 @@ target_link_libraries(ntexample
     ${WPILIB_INSTALL_DIR}/lib/libntcore.so
     ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
 
+add_executable(DoubleValueSender src/DoubleValueSender.cpp)
+target_link_libraries(DoubleValueSender
+    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
+    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
+
+add_executable(DoubleArraySender src/DoubleArraySender.cpp)
+target_link_libraries(DoubleArraySender
+    ${WPILIB_INSTALL_DIR}/lib/libntcore.so
+    ${WPILIB_INSTALL_DIR}/lib/libwpiutil.so)
+
+
 # Add the test executable
 add_executable(gpu_detector_test src/gpu_detector_test.cu)
 target_link_libraries(gpu_detector_test
