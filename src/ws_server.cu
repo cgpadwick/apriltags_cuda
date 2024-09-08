@@ -23,6 +23,8 @@
 
 #include "DoubleArraySender.h"
 #include "DoubleValueSender.h"
+#include "IntegerValueSender.h"
+#include "BooleanValueSender.h"
 
 extern "C" {
 #include "apriltag.h"
@@ -213,7 +215,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
           std::cout << "Pose Error: " << err << std::endl;
 
           detection_record["id"] = det->id;
-          tagIDSender.sendValue(det->id);
+          tagIDSender_.sendValue(det->id);
           detection_record["hamming"] = det->hamming;
           detection_record["pose_error"] = err;
 
@@ -230,7 +232,8 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
   void stop() { running_ = false; }
 
  private:
-  DoubleValueSender tagIDSender{"tag_id"};
+  IntegerValueSender tagIDSender_{"tag_id"};
+  BooleanValueSender isConnectedSender_{"ORIN_CONNECTED"};
   std::set<seasocks::WebSocket*> clients_;
   std::mutex mutex_;
   std::shared_ptr<seasocks::Server> server_;
@@ -250,6 +253,7 @@ int main(int argc, char* argv[]) {
   auto logger = std::make_shared<seasocks::PrintfLogger>();
   auto server = std::make_shared<seasocks::Server>(logger);
 
+  isConnectedSender_.setDefaultValue(false);
   try {
     auto handler = std::make_shared<AprilTagHandler>(server);
     server->addWebSocketHandler("/ws", handler);
@@ -258,6 +262,7 @@ int main(int argc, char* argv[]) {
     server->serve("", 8080);
     handler->stop();
     handler->joinReadAndSendThread();
+    isConnectedSender_.sendValue(true); //Is this the right place to put this?
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
     return 1;

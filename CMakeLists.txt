@@ -163,6 +163,8 @@ set(CUDA_LIB_SOURCES
     src/apriltag_utils.cu
     src/DoubleArraySender.cpp
     src/DoubleValueSender.cpp
+    src/IntegerValueSender.cpp
+    src/BooleanValueSender.cpp
     src/video_processor.cu)
 
 # Add a library with the above source files
