@@ -253,7 +253,7 @@ int main(int argc, char* argv[]) {
   auto logger = std::make_shared<seasocks::PrintfLogger>();
   auto server = std::make_shared<seasocks::Server>(logger);
 
-  isConnectedSender_.setDefaultValue(false);
+  //isConnectedSender_.setDefaultValue(false);
   try {
     auto handler = std::make_shared<AprilTagHandler>(server);
     server->addWebSocketHandler("/ws", handler);
@@ -262,7 +262,7 @@ int main(int argc, char* argv[]) {
     server->serve("", 8080);
     handler->stop();
     handler->joinReadAndSendThread();
-    isConnectedSender_.sendValue(true); //Is this the right place to put this?
+    //isConnectedSender_.sendValue(true); //Is this the right place to put this?
   } catch (const std::exception& e) {
     LOG(ERROR) << e.what();
     return 1;
