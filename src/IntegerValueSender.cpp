@@ -15,11 +15,11 @@ IntegerValueSender::IntegerValueSender(std::string key){
   publisher_ = topic.Publish();
 }
 
-void IntegerValueSender::sendValue(int value){
+void IntegerValueSender::sendValue(std:vector<int> value){
   publisher_.Set(value);
 }
 
-void IntegerValueSender::setDefaultValue(int value){
+void IntegerValueSender::setDefaultValue(std::vector<int> value){
   publisher_.SetDefault(value);
 }
 
