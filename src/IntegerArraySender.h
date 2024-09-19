@@ -7,7 +7,6 @@
 
 #include <string>
 #include <vector>
-#include <span>
 
 class IntegerArraySender {
   private:
@@ -19,8 +18,8 @@ class IntegerArraySender {
     IntegerArraySender(std::string key);
 
     // Method declarations
-    void sendValue(std::span<const int64_t> value);
-    void setDefaultValue(std::span<const int64_t> value);
+    void sendValue(std::vector<int> value);
+    void setDefaultValue(std::vector<int> value);
 };
 
 #endif
