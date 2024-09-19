@@ -17,6 +17,7 @@
 #include <thread>
 #include <string>
 #include <vector>
+#include <span>
 
 #include "apriltag_gpu.h"
 #include "apriltag_utils.h"
@@ -197,7 +198,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
 
       // Determine the pose of the tags.
       if (zarray_size(detections) > 0) {
-        std::vector<int> tag_ids = {};
+        std::span<const int64_t> tag_ids = {};
         //std::vector<std::vector<double>> poses = {};
         json detections_record;
         detections_record["Detections"] = json::array();
