@@ -14,10 +14,10 @@ IntegerArraySender::IntegerArraySender(std::string key){
   nt::IntegerArrayTopic topic = table->GetIntegerArrayTopic(key);
   publisher_ = topic.Publish();
 }
-void IntegerArraySender::sendValue(std::vector<int> value){
+void IntegerArraySender::sendValue(std::span<const int64_t> value){
   publisher_.Set(value);
 }
-void IntegerArraySender::setDefaultValue(std::vector<int> value){
+void IntegerArraySender::setDefaultValue(std::span<const int64_t> value){
   publisher_.SetDefault(value);
 }
 
