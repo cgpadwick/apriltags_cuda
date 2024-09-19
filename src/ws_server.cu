@@ -198,7 +198,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
       // Determine the pose of the tags.
       if (zarray_size(detections) > 0) {
         std::vector<int> tag_ids = {};
-        std::vector<std::vector<double>> poses = {};
+        //std::vector<std::vector<double>> poses = {};
         json detections_record;
         detections_record["Detections"] = json::array();
 
@@ -215,12 +215,12 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
           double err = estimate_tag_pose(&info, &pose);
           matd_print(pose.R, "%.3f ");
           matd_print(pose.t, "%.3f ");
-          std::vector <double> pose_data = {pose.R, pose.t};
+          //std::vector <double> pose_data = {pose.R, pose.t};
           std::cout << "Pose Error: " << err << std::endl;
 
           detection_record["id"] = det->id;
           tag_ids.push_back(det->id);
-          poses.push_back(pose_data);
+          //poses.push_back(pose_data);
 
           detection_record["hamming"] = det->hamming;
           detection_record["pose_error"] = err;
