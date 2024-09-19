@@ -8,14 +8,14 @@
 #include <string>
 #include <vector>
 
-class DoubleArraySender {
+class TwoDimensionalDoubleArraySender {
   private:
     nt::NetworkTableInstance inst_;
     nt::DoubleArrayPublisher publisher_;
   
   public:
     // Constructor declaration
-    DoubleArraySender(std::string key);
+    TwoDimensionalDoubleArraySender(std::string key);
 
     // Method declarations
     void sendValue(std::vector<std::vector<double>> value);

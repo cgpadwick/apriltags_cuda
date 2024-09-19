@@ -26,6 +26,7 @@
 #include "DoubleValueSender.h"
 #include "IntegerValueSender.h"
 #include "BooleanValueSender.h"
+#include "IntegerArraySender.h"
 
 extern "C" {
 #include "apriltag.h"
@@ -220,7 +221,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
           detection_record["id"] = det->id;
           tag_ids.push_back(det->id);
           poses.push_back(pose_data);
-          //poseSender_.sendValue(pose_data);
+
           detection_record["hamming"] = det->hamming;
           detection_record["pose_error"] = err;
 
@@ -239,8 +240,8 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
 
  private:
   IntegerArraySender tagIDSender_{"tag_id"};
-  BooleanValueSender isConnectedSender_{"ORIN_CONNECTED"};
-  DoubleArraySender poseSender_{"pose"};
+  //BooleanValueSender isConnectedSender_{"ORIN_CONNECTED"};
+  //DoubleArraySender poseSender_{"pose"};
   std::set<seasocks::WebSocket*> clients_;
   std::mutex mutex_;
   std::shared_ptr<seasocks::Server> server_;
