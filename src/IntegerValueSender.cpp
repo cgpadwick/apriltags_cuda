@@ -15,7 +15,7 @@ IntegerValueSender::IntegerValueSender(std::string key){
   publisher_ = topic.Publish();
 }
 
-void IntegerSender::sendValue(int value){
+void IntegerValueSender::sendValue(int value){
   publisher_.Set(value);
 }
 
