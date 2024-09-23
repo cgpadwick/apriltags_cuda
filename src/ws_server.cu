@@ -149,7 +149,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
     td->nthreads = 1;
     td->debug = false;
     td->refine_edges = true;
-    td->wp = workerpool_create(1);
+    td->wp = workerpool_create(4);
 
     // Setup Camera Matrix
     cam.fx = 905.495617;
@@ -173,9 +173,6 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
     info.cx = cam.cx;
     info.cy = cam.cy;
 
-    frc971::apriltag::GpuDetector detector(frame_width, frame_height, td, cam,
-                                           dist);
-
     cv::Mat bgr_img, yuyv_img;
     while (running_) {
       // Handle settings changes.
@@ -195,6 +192,8 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
       cap >> yuyv_img;
       cv::cvtColor(yuyv_img, bgr_img, cv::COLOR_YUV2BGR_YUYV);
 
+      frc971::apriltag::GpuDetector detector(frame_width, frame_height, td, cam,
+                                             dist);
       detector.Detect(yuyv_img.data);
       const zarray_t* detections = detector.Detections();
       draw_detection_outlines(bgr_img, const_cast<zarray_t*>(detections));
