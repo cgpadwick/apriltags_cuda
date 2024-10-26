@@ -217,7 +217,6 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
 
       // Determine the pose of the tags.
       if (zarray_size(detections) > 0) {
-        std::vector<int64_t> tag_ids = {};
         std::vector<double> networktables_pose_data = {};
         //std::vector<std::vector<double>> poses = {};
         json detections_record;
@@ -253,7 +252,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
                                    pose.t->data[2]};
 
           detections_record["detections"].push_back(record);
-          tag_ids.push_back(det->id);
+          networktables_pose_data.push_back(det->id * 1.0);
 
           networktables_pose_data.push_back(pose.t->data[0]);
           networktables_pose_data.push_back(pose.t->data[1]);
@@ -263,8 +262,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
         // Send the pose data
         std::string pose_json = detections_record.dump();
         broadcastPoseData(pose_json);
-        tagIDSender_.sendValue(tag_ids);
-        poseSender_.sendValue(networktables_pose_data);
+        tagSender_.sendValue(networktables_pose_data);
       }
     }
 
@@ -276,8 +274,7 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
   void stop() { running_ = false; }
 
  private:
-  IntegerArraySender tagIDSender_{"tag_id"};
-  DoubleArraySender poseSender_{"raw_pose"};
+  DoubleArraySender tagSender_{"raw_pose"};
   std::set<seasocks::WebSocket*> clients_;
   std::mutex mutex_;
   std::shared_ptr<seasocks::Server> server_;
