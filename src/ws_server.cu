@@ -218,7 +218,6 @@ class AprilTagHandler : public seasocks::WebSocket::Handler {
       // Determine the pose of the tags.
       if (zarray_size(detections) > 0) {
         std::vector<double> networktables_pose_data = {};
-        //std::vector<std::vector<double>> poses = {};
         json detections_record;
         detections_record["type"] = "pose_data";
         detections_record["detections"] = json::array();
