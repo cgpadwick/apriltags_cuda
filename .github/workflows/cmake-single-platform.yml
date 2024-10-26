@@ -1,0 +1,101 @@
+# This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+name: CMake on a single platform
+
+on:
+  push:
+    branches: [ "main", "ci_test" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  build:
+    name: Code builds cleanly
+    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
+    # You can convert this to a matrix build if you need cross-platform coverage.
+    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check disk space
+      run: df . -h
+
+    - name: Clean up disk space
+      run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+    - name: Check disk space after cleanup
+      run: df . -h
+
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup Docker Builds
+      uses: docker/setup-buildx-action@v3
+
+    - name: Cache Docker layers
+      uses: actions/cache@v4
+      with:
+        path: /tmp/.buildx-cache
+        key: ${{ runner.os }}-buildx-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-buildx-
+
+    - name: Build Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./Dockerfile
+        push: false
+        load: true
+        tags: apriltags_cuda:latest
+        cache-from: type=local,src=/tmp/.buildx-cache
+        cache-to: type=local,dest=/tmp/.buildx-cache-new
+
+    - name: Move cache
+      run: |
+        rm -rf /tmp/.buildx-cache
+        mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+
+    - name: Restore build cache
+      uses: actions/cache@v4
+      with:
+          path: build
+          key: ${{ runner.os }}-build-${{ hashFiles('**/*.cpp', '**/*.h') }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+
+    - name: Build project
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/workspace apriltags_cuda:latest \
+          bash -c "cd /workspace && \
+          git config --system --add safe.directory /workspace/build/OpenCV/src/OpenCV && \
+          git config --system --add safe.directory /workspace/build/wpilib/src/wpilib && \
+          git config --system --add safe.directory /workspace/build/wpilib/src/wpilib-build/_deps/googletest-src && \
+          git config --system --add safe.directory /workspace/build/wpilib/src/wpilib-build/_deps/apriltaglib-src && \
+          git config --system --add safe.directory /workspace/build/seasocks/src/seasocks && \
+          git config --system --add safe.directory /workspace/build/cccl/src/CCCL && \
+          git config --system --add safe.directory /workspace/build/json/src/json && \
+          git config --system --add safe.directory /workspace/build/apriltag/src/apriltag && \
+          cmake -B build -DCMAKE_CUDA_COMPILER=clang++-17 \
+          -DCMAKE_CXX_COMPILER=clang++-17 -DCMAKE_CUDA_ARCHITECTURES=52 \
+          -DNUM_PROCESSORS=2 -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} && cmake --build build"
+
+    - name: Run tests
+      run: |
+        docker run --rm -v ${{ github.workspace }}:/workspace apriltags_cuda:latest \
+          bash -c "cd /workspace/build && echo \"hook up some real tests someday\" "
+
+    - name: Cache build
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: ${{ runner.os }}-build-${{ hashFiles('**/*.cpp', '**/*.h') }}
+        restore-keys: |
+          ${{ runner.os }}-build-
+
