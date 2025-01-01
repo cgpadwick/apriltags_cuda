@@ -166,6 +166,7 @@ set(CUDA_LIB_SOURCES
     src/IntegerValueSender.cpp
     src/BooleanValueSender.cpp
     src/IntegerArraySender.cpp
+    src/NetworkTablesUtil.cpp
     src/video_processor.cu)
 
 # Add a library with the above source files
