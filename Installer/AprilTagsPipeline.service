@@ -1,0 +1,14 @@
+[Unit]
+Description=Start/teardown apriltags stuff
+#After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/apps/AprilTags/ApriltagsManager.sh start
+RemainAfterExit=true
+ExecStop=/apps/AprilTags/ApriltagsManager.sh stop
+StandardOutput=journal
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
